@@ -379,9 +379,4 @@ final class XmlDeserializer {
     private interface FieldDataHandler<T> {
         T handle(String field) throws DataParserException;
     }
-
-    @FunctionalInterface
-    private interface SubfieldDataHandler<E> {
-        void handle(String subfield, Map<E, Object> storage) throws DataParserException;
-    }
 }
