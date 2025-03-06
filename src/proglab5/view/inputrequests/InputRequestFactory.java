@@ -9,8 +9,8 @@ public abstract class InputRequestFactory {
     public abstract <T> PrimitiveDataInputRequest<T> createPrimitiveDataInputRequest(
             String requestText, String commentText, PrimitiveDataParser<T> parser);
 
-    public abstract <T> CompositeDataInputRequest<T> createCompositeDataInputRequest(
-            String requestText, String commentText, CompositeDataParser<T> parser);
+    public abstract <E, T> CompositeDataInputRequest<E, T> createCompositeDataInputRequest(
+            String requestText, String commentText, CompositeDataParser<E, T> parser);
 
     public abstract <T> OptionalDataInputRequest<T> createOptionalInputRequest(DataInputRequest<T> req);
 
@@ -22,8 +22,8 @@ public abstract class InputRequestFactory {
         return createPrimitiveDataInputRequest(requestText, null, parser);
     }
 
-    public <T> CompositeDataInputRequest<T> createCompositeDataInputRequest(
-            String requestText, CompositeDataParser<T> parser) {
+    public <E, T> CompositeDataInputRequest<E, T> createCompositeDataInputRequest(
+            String requestText, CompositeDataParser<E, T> parser) {
         return createCompositeDataInputRequest(requestText, null, parser);
     }
 }

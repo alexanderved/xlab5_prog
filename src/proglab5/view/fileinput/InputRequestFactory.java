@@ -22,8 +22,8 @@ class InputRequestFactory extends proglab5.view.inputrequests.InputRequestFactor
     }
 
     @Override
-    public <T> CompositeDataInputRequest<T> createCompositeDataInputRequest(
-            String requestText, String commentText, CompositeDataParser<T> parser) {
+    public <E, T> CompositeDataInputRequest<E, T> createCompositeDataInputRequest(
+            String requestText, String commentText, CompositeDataParser<E, T> parser) {
         return new proglab5.view.fileinput.CompositeDataInputRequest<>(fileInputView, requestText, commentText, parser);
     }
 

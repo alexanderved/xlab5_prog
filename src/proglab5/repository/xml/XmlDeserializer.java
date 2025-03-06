@@ -9,9 +9,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import proglab5.domain.Organization;
-import proglab5.domain.OrganizationTemplate;
 import proglab5.exceptions.DataParserException;
 import proglab5.exceptions.RepositoryDataCorruptedException;
+import proglab5.utils.fields.AddressFields;
+import proglab5.utils.fields.CoordinatesFields;
+import proglab5.utils.fields.LocationFields;
+import proglab5.utils.fields.OrganizationFields;
 import proglab5.utils.parsers.AddressParser;
 import proglab5.utils.parsers.CoordinatesParser;
 import proglab5.utils.parsers.LocationParser;
@@ -93,8 +96,7 @@ final class XmlDeserializer {
 
     private static Organization deserializeOrganization(XMLStreamReader xmlReader)
             throws RepositoryDataCorruptedException, DataParserException, XMLStreamException {
-        final Map<String, Object> orgData = new HashMap<>();
-        final Map<String, Object> orgTemplateData = new HashMap<>();
+        final Map<OrganizationFields, Object> orgData = new HashMap<>();
 
         boolean isBreak = false;
         while (xmlReader.hasNext()) {
@@ -116,46 +118,47 @@ final class XmlDeserializer {
                 case XMLEvent.START_ELEMENT:
                     String localName = xmlReader.getLocalName();
                     switch (localName) {
-                        case OrganizationParser.ID:
-                            deserializeSimpleField(localName, xmlReader, orgData, OrganizationParser::parseId);
+                        case "id":
+                            deserializeSimpleField(localName, xmlReader, orgData, OrganizationFields.ID,
+                                    OrganizationParser::parseId);
                             break;
 
-                        case OrganizationTemplateParser.NAME:
+                        case "name":
                             deserializeSimpleField(localName, xmlReader,
-                                    orgTemplateData, OrganizationTemplateParser::parseName);
+                                    orgData, OrganizationFields.NAME, OrganizationTemplateParser::parseName);
                             break;
 
-                        case OrganizationTemplateParser.COORDINATES:
-                            deserializeCoordinates(xmlReader, orgTemplateData);
+                        case "coordinates":
+                            deserializeCoordinates(xmlReader, orgData);
                             break;
 
-                        case OrganizationParser.CREATION_DATE:
+                        case "creationDate":
                             deserializeSimpleField(localName, xmlReader,
-                                    orgData, OrganizationParser::parseCreationDate);
+                                    orgData, OrganizationFields.CREATION_DATE, OrganizationParser::parseCreationDate);
                             break;
 
-                        case OrganizationTemplateParser.ANNUAL_TURNOVER:
+                        case "annualTurnover":
+                            deserializeSimpleField(localName, xmlReader, orgData, OrganizationFields.ANNUAL_TURNOVER,
+                                    OrganizationTemplateParser::parseAnnualTurnover);
+                            break;
+
+                        case "fullName":
                             deserializeSimpleField(localName, xmlReader,
-                                    orgTemplateData, OrganizationTemplateParser::parseAnnualTurnover);
+                                    orgData, OrganizationFields.FULL_NAME, OrganizationTemplateParser::parseFullName);
                             break;
 
-                        case OrganizationTemplateParser.FULL_NAME:
+                        case "employeesCount":
+                            deserializeSimpleField(localName, xmlReader, orgData, OrganizationFields.EMPLOYEES_COUNT,
+                                    OrganizationTemplateParser::parseEmployeesCount);
+                            break;
+
+                        case "type":
                             deserializeSimpleField(localName, xmlReader,
-                                    orgTemplateData, OrganizationTemplateParser::parseFullName);
+                                    orgData, OrganizationFields.TYPE, OrganizationTemplateParser::parseType);
                             break;
 
-                        case OrganizationTemplateParser.EMPLOYEES_COUNT:
-                            deserializeSimpleField(localName, xmlReader,
-                                    orgTemplateData, OrganizationTemplateParser::parseEmployeesCount);
-                            break;
-
-                        case OrganizationTemplateParser.TYPE:
-                            deserializeSimpleField(localName, xmlReader,
-                                    orgTemplateData, OrganizationTemplateParser::parseType);
-                            break;
-
-                        case OrganizationTemplateParser.OFFICIAL_ADDRESS:
-                            deserializeOfficialAddress(xmlReader, orgTemplateData);
+                        case "officialAddress":
+                            deserializeOfficialAddress(xmlReader, orgData);
                             break;
 
                         default:
@@ -173,14 +176,11 @@ final class XmlDeserializer {
             }
         }
 
-        OrganizationTemplate template = OrganizationTemplateParser.parse(orgTemplateData);
-        orgData.put(OrganizationParser.TEMPLATE, template);
-
         return OrganizationParser.parse(orgData);
     }
 
-    private static <T> void deserializeSimpleField(String fieldName, XMLStreamReader xmlReader,
-            Map<String, Object> storage, FieldDataHandler<T> handler)
+    private static <E, T> void deserializeSimpleField(String fieldName, XMLStreamReader xmlReader,
+            Map<E, Object> storage, E field, FieldDataHandler<T> handler)
             throws RepositoryDataCorruptedException, DataParserException, XMLStreamException {
         String fieldString = null;
 
@@ -211,12 +211,12 @@ final class XmlDeserializer {
             }
         }
 
-        storage.put(fieldName, handler.handle(fieldString));
+        storage.put(field, handler.handle(fieldString));
     }
 
-    private static void deserializeCoordinates(XMLStreamReader xmlReader, Map<String, Object> storage)
+    private static void deserializeCoordinates(XMLStreamReader xmlReader, Map<OrganizationFields, Object> storage)
             throws RepositoryDataCorruptedException, DataParserException, XMLStreamException {
-        final Map<String, Object> coordsData = new HashMap<>();
+        final Map<CoordinatesFields, Object> coordsData = new HashMap<>();
 
         boolean isBreak = false;
         while (xmlReader.hasNext()) {
@@ -232,12 +232,14 @@ final class XmlDeserializer {
                 case XMLEvent.START_ELEMENT:
                     String localName = xmlReader.getLocalName();
                     switch (localName) {
-                        case CoordinatesParser.X:
-                            deserializeSimpleField(localName, xmlReader, coordsData, CoordinatesParser::parseX);
+                        case "x":
+                            deserializeSimpleField(localName, xmlReader, coordsData,
+                                    CoordinatesFields.X, CoordinatesParser::parseX);
                             break;
 
-                        case CoordinatesParser.Y:
-                            deserializeSimpleField(localName, xmlReader, coordsData, CoordinatesParser::parseY);
+                        case "y":
+                            deserializeSimpleField(localName, xmlReader, coordsData,
+                                    CoordinatesFields.Y, CoordinatesParser::parseY);
                             break;
 
                         default:
@@ -247,7 +249,7 @@ final class XmlDeserializer {
                     break;
 
                 case XMLEvent.END_ELEMENT:
-                    if (xmlReader.getLocalName().equals(OrganizationTemplateParser.COORDINATES)) {
+                    if (xmlReader.getLocalName().equals("coordinates")) {
                         isBreak = true;
                         break;
                     }
@@ -262,12 +264,12 @@ final class XmlDeserializer {
             }
         }
 
-        storage.put(OrganizationTemplateParser.COORDINATES, CoordinatesParser.parse(coordsData));
+        storage.put(OrganizationFields.COORDINATES, CoordinatesParser.parse(coordsData));
     }
 
-    private static void deserializeOfficialAddress(XMLStreamReader xmlReader, Map<String, Object> storage)
+    private static void deserializeOfficialAddress(XMLStreamReader xmlReader, Map<OrganizationFields, Object> storage)
             throws RepositoryDataCorruptedException, DataParserException, XMLStreamException {
-        final Map<String, Object> addrData = new HashMap<>();
+        final Map<AddressFields, Object> addrData = new HashMap<>();
 
         boolean isBreak = false;
         while (xmlReader.hasNext()) {
@@ -283,11 +285,12 @@ final class XmlDeserializer {
                 case XMLEvent.START_ELEMENT:
                     String localName = xmlReader.getLocalName();
                     switch (localName) {
-                        case AddressParser.STREET:
-                            deserializeSimpleField(localName, xmlReader, addrData, AddressParser::parseStreet);
+                        case "street":
+                            deserializeSimpleField(localName, xmlReader, addrData,
+                                    AddressFields.STREET, AddressParser::parseStreet);
                             break;
 
-                        case AddressParser.TOWN:
+                        case "town":
                             deserializeTown(xmlReader, addrData);
                             break;
 
@@ -298,7 +301,7 @@ final class XmlDeserializer {
                     break;
 
                 case XMLEvent.END_ELEMENT:
-                    if (xmlReader.getLocalName().equals(OrganizationTemplateParser.OFFICIAL_ADDRESS)) {
+                    if (xmlReader.getLocalName().equals("officialAddress")) {
                         isBreak = true;
                         break;
                     }
@@ -313,12 +316,12 @@ final class XmlDeserializer {
             }
         }
 
-        storage.put(OrganizationTemplateParser.OFFICIAL_ADDRESS, AddressParser.parse(addrData));
+        storage.put(OrganizationFields.OFFICIAL_ADDRESS, AddressParser.parse(addrData));
     }
 
-    private static void deserializeTown(XMLStreamReader xmlReader, Map<String, Object> storage)
+    private static void deserializeTown(XMLStreamReader xmlReader, Map<AddressFields, Object> storage)
             throws RepositoryDataCorruptedException, DataParserException, XMLStreamException {
-        final Map<String, Object> locData = new HashMap<>();
+        final Map<LocationFields, Object> locData = new HashMap<>();
 
         boolean isBreak = false;
         while (xmlReader.hasNext()) {
@@ -334,16 +337,19 @@ final class XmlDeserializer {
                 case XMLEvent.START_ELEMENT:
                     String localName = xmlReader.getLocalName();
                     switch (localName) {
-                        case LocationParser.X:
-                            deserializeSimpleField(localName, xmlReader, locData, LocationParser::parseX);
+                        case "x":
+                            deserializeSimpleField(localName, xmlReader, locData,
+                                    LocationFields.X, LocationParser::parseX);
                             break;
 
-                        case LocationParser.Y:
-                            deserializeSimpleField(localName, xmlReader, locData, LocationParser::parseY);
+                        case "y":
+                            deserializeSimpleField(localName, xmlReader, locData,
+                                    LocationFields.Y, LocationParser::parseY);
                             break;
 
-                        case LocationParser.Z:
-                            deserializeSimpleField(localName, xmlReader, locData, LocationParser::parseZ);
+                        case "z":
+                            deserializeSimpleField(localName, xmlReader, locData,
+                                    LocationFields.Z, LocationParser::parseZ);
                             break;
 
                         default:
@@ -353,7 +359,7 @@ final class XmlDeserializer {
                     break;
 
                 case XMLEvent.END_ELEMENT:
-                    if (xmlReader.getLocalName().equals(AddressParser.TOWN)) {
+                    if (xmlReader.getLocalName().equals("town")) {
                         isBreak = true;
                         break;
                     }
@@ -368,11 +374,16 @@ final class XmlDeserializer {
             }
         }
 
-        storage.put(AddressParser.TOWN, LocationParser.parse(locData));
+        storage.put(AddressFields.TOWN, LocationParser.parse(locData));
     }
 
     @FunctionalInterface
     private interface FieldDataHandler<T> {
         T handle(String field) throws DataParserException;
+    }
+
+    @FunctionalInterface
+    private interface SubfieldDataHandler<E> {
+        void handle(String subfield, Map<E, Object> storage) throws DataParserException;
     }
 }

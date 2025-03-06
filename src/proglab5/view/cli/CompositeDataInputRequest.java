@@ -8,17 +8,17 @@ import proglab5.exceptions.InputDeniedException;
 import proglab5.exceptions.InputFailedException;
 import proglab5.exceptions.UnexpectedEODException;
 
-class CompositeDataInputRequest<T>
-        extends proglab5.view.inputrequests.CompositeDataInputRequest<T> {
+class CompositeDataInputRequest<E, T>
+        extends proglab5.view.inputrequests.CompositeDataInputRequest<E, T> {
     private Cli cli;
 
     CompositeDataInputRequest(
-            Cli cli, String requestText, CompositeDataParser<T> parser) {
+            Cli cli, String requestText, CompositeDataParser<E, T> parser) {
         this(cli, requestText, null, parser);
     }
 
     CompositeDataInputRequest(
-            Cli cli, String requestText, String commentText, CompositeDataParser<T> parser) {
+            Cli cli, String requestText, String commentText, CompositeDataParser<E, T> parser) {
         super(requestText, commentText, parser);
 
         this.cli = cli;
@@ -38,7 +38,7 @@ class CompositeDataInputRequest<T>
                 cli.output("Введите " + getRequestText() + ": ");
             }
 
-            Map<String, Object> data = new HashMap<>();
+            Map<E, Object> data = new HashMap<>();
             for (var entry : fieldRequests.entrySet()) {
                 try {
                     data.put(entry.getKey(), entry.getValue().request());
