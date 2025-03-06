@@ -1,6 +1,6 @@
 package proglab5.utils.fields;
 
-public enum AddressFields {
+public enum AddressFields implements Fields {
     STREET("street", "улица"),
     TOWN("town", "координаты города");
 
@@ -28,14 +28,17 @@ public enum AddressFields {
         throw new IllegalArgumentException("Отсутствует константа `AddressFields` с названием " + name);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
 
+    @Override
     public String getExtra() {
         return extra;
     }
