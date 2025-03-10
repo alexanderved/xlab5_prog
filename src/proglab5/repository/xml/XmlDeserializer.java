@@ -83,12 +83,12 @@ final class XmlDeserializer {
                 throw new RepositoryDataCorruptedException();
             }
         } catch (XMLStreamException | DataParserException e) {
-            throw new RepositoryDataCorruptedException(e.getMessage());
+            throw new RepositoryDataCorruptedException(e);
         } finally {
             try {
                 xmlReader.close();
             } catch (XMLStreamException e) {
-                throw new RepositoryDataCorruptedException(e.getMessage());
+                throw new RepositoryDataCorruptedException(e);
             }
         }
 

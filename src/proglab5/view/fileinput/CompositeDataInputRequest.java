@@ -45,7 +45,7 @@ class CompositeDataInputRequest<E, T>
             try {
                 return parser.parse(data);
             } catch (DataParserException e) {
-                throw new InputFailedException(e.getMessage());
+                throw new InputFailedException(e);
             }
         }
     }

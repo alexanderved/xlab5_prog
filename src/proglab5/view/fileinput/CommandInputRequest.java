@@ -34,7 +34,7 @@ class CommandInputRequest
             return parser.parse(fileInputView.input(), runner);
         } catch (WrongNumberOfArgumentsException | InvalidArgumentFormatException
                 | UnsupportedCommandException e) {
-            throw new InputFailedException(e);
+            throw new InputFailedException(e.getMessage());
         }
     }   
 }

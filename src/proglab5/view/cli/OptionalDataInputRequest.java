@@ -21,8 +21,7 @@ class OptionalDataInputRequest<T> extends proglab5.view.inputrequests.OptionalDa
 
     @Override
     public T request() throws InputDeniedException, InputFailedException, UnexpectedEODException {
-        String ans = cli.input(
-                "Желаете указать оффициальный адресс организации (y/n[default])? ");
+        String ans = cli.input("Желаете указать " + req.getRequestText() + " (y/n[default])? ");
         
         return ans.equals("y") ? cli.input(req) : null;
     }    

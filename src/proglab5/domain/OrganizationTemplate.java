@@ -41,14 +41,16 @@ public final class OrganizationTemplate implements Comparable<Organization> {
     }
 
     /**
-     * @return годовой оборот организации или null, если данная информация отсутствует
+     * @return годовой оборот организации или null, если данная информация
+     *         отсутствует
      */
     public Float getAnnualTurnover() {
         return annualTurnover;
     }
 
     /**
-     * @return полное название организации или null, если данная информация отсутствует
+     * @return полное название организации или null, если данная информация
+     *         отсутствует
      */
     public String getFullName() {
         return fullName;
@@ -69,7 +71,8 @@ public final class OrganizationTemplate implements Comparable<Organization> {
     }
 
     /**
-     * @return официальный адрес организации или null, если данная информация отсутствует
+     * @return официальный адрес организации или null, если данная информация
+     *         отсутствует
      */
     public Address getOfficialAddress() {
         return officialAddress;
@@ -90,7 +93,7 @@ public final class OrganizationTemplate implements Comparable<Organization> {
             return false;
         }
 
-        OrganizationTemplate org = (OrganizationTemplate)o;
+        OrganizationTemplate org = (OrganizationTemplate) o;
 
         if (annualTurnover == null && org.annualTurnover != null) {
             return false;
@@ -138,7 +141,7 @@ public final class OrganizationTemplate implements Comparable<Organization> {
     }
 
     /**
-     * Строитель экземпляров класса OrganizationTemplate.
+     * Строитель экземпляров класса {@code OrganizationTemplate}.
      */
     public static final class Builder {
         private String name;
@@ -151,6 +154,7 @@ public final class OrganizationTemplate implements Comparable<Organization> {
 
         /**
          * Устанавливает название организации.
+         * 
          * @param name Название организации
          * @return Строитель экземпляров класса
          * @throws InvalidFieldFormatException если поле не удовлетворяет формату
@@ -164,9 +168,15 @@ public final class OrganizationTemplate implements Comparable<Organization> {
             return this;
         }
 
+        /**
+         * Устанавливает координаты организации.
+         * 
+         * @param coordinates Координаты организации
+         * @return Строитель экземпляров класса
+         * @throws InvalidFieldFormatException если поле не удовлетворяет формату
+         */
         public Builder setCoordinates(Coordinates coordinates)
-            throws InvalidFieldFormatException
-        {
+                throws InvalidFieldFormatException {
             if (!OrganizationValidator.validateCoordinates(coordinates)) {
                 throw new InvalidFieldFormatException("coordinates");
             }
@@ -175,9 +185,15 @@ public final class OrganizationTemplate implements Comparable<Organization> {
             return this;
         }
 
+        /**
+         * Устанавливает годовой оборот организации.
+         * 
+         * @param annualTurnover Годовой оборот организации
+         * @return Строитель экземпляров класса
+         * @throws InvalidFieldFormatException если поле не удовлетворяет формату
+         */
         public Builder setAnnualTurnover(Float annualTurnover)
-            throws InvalidFieldFormatException
-        {
+                throws InvalidFieldFormatException {
             if (!OrganizationValidator.validateAnnualTurnover(annualTurnover)) {
                 throw new InvalidFieldFormatException("annualTurnover");
             }
@@ -186,15 +202,27 @@ public final class OrganizationTemplate implements Comparable<Organization> {
             return this;
         }
 
+        /**
+         * Устанавливает полное название организации.
+         * 
+         * @param fullName Полное название организации
+         * @return Строитель экземпляров класса
+         */
         public Builder setFullName(String fullName) {
             this.fullName = fullName;
 
             return this;
         }
 
+        /**
+         * Устанавливает число сотрудников организации.
+         * 
+         * @param employeesCount Число сотрудников организации
+         * @return Строитель экземпляров класса
+         * @throws InvalidFieldFormatException если поле не удовлетворяет формату
+         */
         public Builder setEmployeesCount(int employeesCount)
-            throws InvalidFieldFormatException
-        {
+                throws InvalidFieldFormatException {
             if (!OrganizationValidator.validateEmployeesCount(employeesCount)) {
                 throw new InvalidFieldFormatException("employeesCount");
             }
@@ -203,6 +231,13 @@ public final class OrganizationTemplate implements Comparable<Organization> {
             return this;
         }
 
+        /**
+         * Устанавливает тип организации.
+         * 
+         * @param type Тип организации
+         * @return Строитель экземпляров класса
+         * @throws InvalidFieldFormatException если поле не удовлетворяет формату
+         */
         public Builder setType(OrganizationType type) throws InvalidFieldFormatException {
             if (!OrganizationValidator.validateType(type)) {
                 throw new InvalidFieldFormatException("type");
@@ -212,22 +247,39 @@ public final class OrganizationTemplate implements Comparable<Organization> {
             return this;
         }
 
+        /**
+         * Устанавливает официальный адрес организации.
+         * 
+         * @param officialAddress Официальный адрес организации
+         * @return Строитель экземпляров класса
+         */
         public Builder setOfficialAddress(Address officialAddress) {
             this.officialAddress = officialAddress;
 
             return this;
         }
 
+        /**
+         * Проверяет, установлены ли все обязательные поля класса.
+         * 
+         * @return {@code true}, если все обязательные поля класс установлены
+         */
         public boolean isComplete() {
             return name != null && coordinates != null
-                && employeesCount != null && type != null;
+                    && employeesCount != null && type != null;
         }
 
+        /**
+         * Создает экземпляр класса {@code OrganizationTemplate}.
+         * 
+         * @return экземпляр класса {@code OrganizationTemplate}
+         * @throws IllegalStateException если не все обязательные поля класса были установлены
+         */
         public OrganizationTemplate build() {
             if (!isComplete()) {
                 throw new IllegalStateException(
-                    "Метод `build` класса `OrganizationTemplate.Builder` не может быть"
-                    + " вызван пока не будут установлены все обязательные поля");
+                        "Метод `build` класса `OrganizationTemplate.Builder` не может быть"
+                                + " вызван пока не будут установлены все обязательные поля");
             }
 
             return new OrganizationTemplate(this);

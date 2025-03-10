@@ -14,7 +14,7 @@ public enum OrganizationFields implements Fields {
     FULL_NAME("fullName", "полное название"),
     EMPLOYEES_COUNT("employeesCount", "число сотрудников"),
     TYPE("type", "тип", getTypeExtraInfo()),
-    OFFICIAL_ADDRESS("officialAddress", "официальный адресс");
+    OFFICIAL_ADDRESS("officialAddress", "официальный адрес");
 
     private final String name;
     private final String displayName;

@@ -126,7 +126,9 @@ public class Runner {
                 }
 
                 cmd.execute();
-            } catch (InputDeniedException | InputFailedException e) {
+            } catch (InputFailedException e) {
+                view.error(e.getMessage());
+            } catch (InputDeniedException e) {
                 view.error("Не удалось прочитать команду: " + e.getMessage());
 
                 stop();

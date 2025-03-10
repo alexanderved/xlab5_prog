@@ -34,7 +34,7 @@ final class PrimitiveDataInputRequest<T>
 
             return parser.parse(fieldString);
         } catch (DataParserException e) {
-            throw new InputFailedException(e.getMessage());
+            throw new InputFailedException(e);
         }
     }
 }

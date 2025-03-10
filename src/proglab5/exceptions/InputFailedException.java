@@ -1,11 +1,21 @@
 package proglab5.exceptions;
 
+/**
+ * Исключение, выбрасываемое в том случае, когда в процессе ввода возникла
+ * ошибка.
+ */
 public class InputFailedException extends Exception {
-    public InputFailedException(String msg) {
-        super(msg);
+    /**
+     * @param message Сообщение о возникшей ошибке
+     */
+    public InputFailedException(String message) {
+        super(message);
     }
 
-    public InputFailedException(Exception e) {
+    /**
+     * @param e Ошибка или исключение, из-за которого возникла ошибка ввода
+     */
+    public InputFailedException(Throwable e) {
         super(e);
     }
 }

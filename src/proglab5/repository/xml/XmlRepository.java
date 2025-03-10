@@ -11,9 +11,15 @@ import proglab5.exceptions.RepositoryAccessDeniedException;
 import proglab5.exceptions.RepositoryDataCorruptedException;
 import proglab5.repository.Repository;
 
+/**
+ * Репозиторий, хранящий данные организаций в формате XML.
+ */
 public class XmlRepository extends Repository {
     private String filepath;
 
+    /**
+     * @param filepath Путь до файла, в который будут сохранены данные организаций
+     */
     public XmlRepository(String filepath) {
         this.filepath = filepath;
     }
@@ -25,7 +31,7 @@ public class XmlRepository extends Repository {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             return XmlDeserializer.deserializeOrganizationCollection(reader);
         } catch (IOException e) {
-            throw new RepositoryAccessDeniedException(e.getMessage());
+            throw new RepositoryAccessDeniedException(e);
         }
     }
 
@@ -36,7 +42,7 @@ public class XmlRepository extends Repository {
         try (PrintWriter writer = new PrintWriter(filepath);) {
             XmlSerializer.serializeOrganizationCollection(collection, writer);
         } catch (IOException e) {
-            throw new RepositoryAccessDeniedException(e.getMessage());
+            throw new RepositoryAccessDeniedException(e);
         }
     }
 }
