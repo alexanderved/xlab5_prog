@@ -1,0 +1,90 @@
+package proglab.controller.commands;
+
+import proglab.controller.Runner;
+import proglab.domain.OrganizationTemplate;
+import proglab.exceptions.InvalidArgumentFormatException;
+import proglab.exceptions.UnexpectedEODException;
+import proglab.exceptions.UnsupportedCommandException;
+import proglab.exceptions.WrongNumberOfArgumentsException;
+import proglab.utils.OrganizationTemplateCollector;
+
+/**
+ * Команда 'update', обновляющая значение элемента коллекции, id которого равен заданному.
+ */
+public class UpdateCommand extends Command {
+    private static final String CMD_NAME = "update";
+    private static final String CMD_ARG_FORMAT = "id {element}";
+    private static final String CMD_DESCR =
+        "обновить значение элемента коллекции, id которого равен заданному";
+    private static final int NB_ARGUMENTS = 1;
+
+    private final int id;
+    private final OrganizationTemplate template;
+
+    private UpdateCommand(int id, OrganizationTemplate template, Runner runner) {
+        super(runner);
+
+        if (template == null) {
+            throw new IllegalArgumentException("Поле `template` не может быть null");
+        }
+
+        this.id = id;
+        this.template = template;
+    }
+    
+    @Override
+    public void execute() {
+        if (runner.getCollectionManager().update(id, template)) {
+            runner.getView().output("Информация организации с ID " + id + " обновлена");
+        } else {
+            runner.getView().output("Не удалось найти организацию с ID " + id);
+        }
+    }
+
+    /**
+     * Парсер команды 'update'.
+     */
+    public static final class Parser extends CommandParser {
+        private static final String CMD_INFO = CMD_NAME
+                + " " + CMD_ARG_FORMAT + ": " + CMD_DESCR;
+
+        @Override
+        public String listCommandsInfo() {
+            return CMD_INFO;
+        }
+
+        @Override
+        public Command parse(String cmd, Runner runner)
+        throws
+            WrongNumberOfArgumentsException,
+            InvalidArgumentFormatException,
+            UnsupportedCommandException,
+            UnexpectedEODException
+        {
+            String[] args = cmd.split(" ");
+            if (!args[0].equals(CMD_NAME)) {
+                throw new UnsupportedCommandException(args[0]);
+            }
+
+            if (args.length - 1 != NB_ARGUMENTS) {
+                throw new WrongNumberOfArgumentsException(args[0],
+                        args.length - 1, NB_ARGUMENTS);
+            }
+
+            int id;
+            try {
+                id = Integer.parseInt(args[1]);
+            } catch (NumberFormatException | NullPointerException e) {
+                throw new InvalidArgumentFormatException(CMD_NAME, "id", "Целое число");
+            }
+
+            OrganizationTemplate template =
+                OrganizationTemplateCollector.collect(runner.getView());
+            if (template == null) { 
+                return null;
+            }
+
+            return new UpdateCommand(id, template, runner);
+        }
+    }
+}
